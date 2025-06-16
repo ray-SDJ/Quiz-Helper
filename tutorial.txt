@@ -1,0 +1,170 @@
+This is a **Quiz Helper Application** built in Python that assists users with quiz questions through screenshot capture, text analysis, and AI-powered responses. Let me break down how each component works:
+
+## 🏗️ **Application Architecture**
+
+The app follows a modular structure:
+- `main.py` - Entry point and setup
+- `src/app.py` - Core application logic
+- `src/ui/` - User interface components  
+- `src/api/` - AI API integration
+- `src/utils/` - Utility functions
+
+## 📋 **Core Functionality**
+
+### **1. Screenshot Capture System**
+The app can capture screenshots of quiz questions on screen:
+
+**How it works:**
+- Press F1 or click "Take Screenshot" 
+- Creates a transparent overlay window covering the entire screen
+- User clicks and drags to select an area
+- Captures that specific region as an image
+- Uses OCR (Optical Character Recognition) to extract text from the image
+
+**Technical implementation:**
+```python
+# Creates fullscreen transparent overlay
+self.overlay_window = tk.Toplevel()
+self.overlay_window.attributes('-fullscreen', True)
+self.overlay_window.attributes('-alpha', 0.3)  # Semi-transparent
+
+# Captures selected area
+screenshot = pyautogui.screenshot(region=(x1, y1, x2-x1, y2-y1))
+
+# Extracts text using Tesseract OCR
+extracted_text = pytesseract.image_to_string(screenshot)
+```
+
+### **2. AI-Powered Question Analysis**
+Uses Grok AI API to analyze quiz questions and provide answers:
+
+**Process:**
+1. Takes question text (from screenshot OCR or manual input)
+2. Sends to Grok API with specialized prompt
+3. Receives structured answer with explanation
+4. Displays results in the interface
+
+**API Integration:**
+```python
+data = {
+    'messages': [
+        {
+            'role': 'system',
+            'content': 'You are a helpful quiz assistant...'
+        },
+        {
+            'role': 'user', 
+            'content': question_text
+        }
+    ],
+    'model': 'grok-3-latest',
+    'temperature': 0.7
+}
+```
+
+### **3. Web Scraping Capability**
+Can analyze quiz content directly from web URLs:
+
+**How it works:**
+- Takes a quiz website URL
+- Scrapes the webpage content
+- Identifies quiz questions using CSS selectors
+- Sends content to AI for analysis
+
+## 🧩 **Key Components Breakdown**
+
+### **`main.py` - Application Entry Point**
+- Displays setup instructions for first-time users
+- Loads API keys from environment variables (`.env.local`)
+- Initializes and starts the main application window
+
+### **`src/app.py` - Core Application Logic**
+This is the heart of the application containing:
+
+**UI Components:**
+- Screenshot capture interface
+- Text input/output areas  
+- API key configuration
+- Control buttons
+
+**Screenshot System:**
+- Global hotkey detection (F1)
+- Mouse event handling for area selection
+- OCR text extraction using Tesseract
+- Image processing with PIL
+
+**API Integration:**
+- Threaded API calls to prevent UI freezing
+- Error handling and status updates
+- Response formatting and display
+
+### **`src/ui/main_window.py` - Main Interface**
+- Uses `ttkthemes` for modern UI styling
+- Handles URL-based quiz analysis
+- Manages threading for non-blocking operations
+- Integrates with core app functionality
+
+### **`src/api/grok_client.py` - AI API Client**
+Simple wrapper for Grok API:
+```python
+def analyze_question(self, content: str) -> dict:
+    # Sends structured request to Grok API
+    # Returns AI analysis of the question
+```
+
+### **`src/utils/web_scraper.py` - Web Content Extraction**
+- Uses `requests` and `BeautifulSoup` for web scraping
+- Attempts multiple CSS selectors to find quiz content
+- Handles different quiz website formats
+- Returns structured content for AI analysis
+
+### **`src/utils/screenshot.py` - Screenshot Utilities**
+Provides screenshot capture functionality:
+- `ScreenshotTool` - Basic screenshot capture
+- `ScreenshotSelector` - Interactive area selection with visual feedback
+
+## 🔧 **Technical Features**
+
+### **Threading and Performance**
+- All AI API calls run in separate threads to prevent UI freezing
+- Thread cleanup on application exit
+- Status updates during long operations
+
+### **Error Handling**
+- Network error handling for API calls
+- Missing dependency detection
+- User-friendly error messages
+
+### **Security**
+- API keys stored in environment variables
+- Masked API key display in UI
+- No hardcoded credentials
+
+### **Cross-Platform Design**
+- Uses standard Python libraries
+- Configurable OCR engine paths
+- OS-specific setup instructions
+
+## 🎯 **User Workflow**
+
+1. **Setup**: Install dependencies, get API key, configure Tesseract OCR
+2. **Capture**: Take screenshot of quiz question OR paste text OR enter URL
+3. **Analyze**: AI processes the question and provides answer + explanation
+4. **Results**: View formatted answer with reasoning
+
+## 📦 **Dependencies**
+
+**Core Libraries:**
+- `tkinter` - GUI framework
+- `PIL` - Image processing
+- `pytesseract` - OCR text extraction
+- `pyautogui` - Screenshot capture
+- `requests` - HTTP requests for API calls
+
+**Additional Features:**
+- `ttkthemes` - Modern UI themes
+- `beautifulsoup4` - HTML parsing for web scraping
+- `pynput` - Global hotkey detection
+- `python-dotenv` - Environment variable management
+
+The application is designed to be user-friendly while providing powerful quiz assistance capabilities through computer vision, web scraping, and AI analysis.
