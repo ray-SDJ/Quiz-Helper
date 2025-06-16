@@ -1,0 +1,24 @@
+# Core dependencies
+pillow>=10.0.0
+pytesseract>=0.3.10
+pyautogui>=0.9.54
+pynput>=1.7.6
+requests>=2.31.0
+python-dotenv>=1.0.0
+ttkthemes>=3.2.2
+
+# Web scraping
+beautifulsoup4>=4.12.2
+
+# API interaction
+requests>=2.31.0
+
+# UI enhancements
+ttkthemes>=3.2.2
+pillow>=10.0.0  # For image handling
+
+# Testing and development (optional)
+pytest>=7.4.0
+pytest-cov>=4.1.0
+black>=23.3.0
+flake8>=6.0.0
